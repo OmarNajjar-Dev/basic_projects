@@ -3,114 +3,123 @@ import time
 
 
 def clear_screen():
+    """Clear the terminal screen for better readability"""
     os.system("cls" if os.name == "nt" else "clear")
 
 
-books = {}
+library_catalog = {}  # Dictionary to store books in the catalog
 
 
-def Add():
+def add_book():
+    """Function to add a book to the catalog"""
     clear_screen()
-    book_ISBN = input("Enter ISBN: ").replace(" ", "")
-    book_ISBN = book_ISBN.zfill(3)
+    isbn = input("Enter ISBN: ").zfill(3).replace(" ", "")
 
-    # The ISBN must be a number
-    if not book_ISBN.isdigit():
+    # Check if the ISBN is a number
+    if not isbn.isdigit():
         print("That is not a number.")
         time.sleep(2)
         print()
 
-    # The ISBN of the added book must be different from the others
-    elif book_ISBN in books:
+    # Check if the book already exists
+    elif isbn in library_catalog:
         print("This book is already in the catalog.")
         time.sleep(2)
 
     else:
-        book_title = input("Enter title: ").strip()
-        book_author = input("Enter author: ").strip()
-        books[book_ISBN] = [book_title, book_author, True]
+        # Add the book details
+        title = input("Enter title: ").strip()
+        author = input("Enter author: ").strip()
+        library_catalog[isbn] = {"title": title, "author": author, "available": True}
         print(
-            f"Book '{books [book_ISBN] [0]}' by {books [book_ISBN] [1]} added to the catalog with ISBN {book_ISBN}."
+            f"Book '{library_catalog[isbn]['title']}' by {library_catalog[isbn]['author']} added to the catalog with ISBN {isbn}."
         )
 
+        # Ask if the user wants to add another book
         another = input("Do you want to add another book? (y/n): ").lower()
         if another == "y":
             clear_screen()
-            Add()
+            add_book()
 
 
-def Check_Out():
+def check_out_book():
+    """Function to check out a book from the catalog"""
     clear_screen()
-    check_out = input("Enter ISBN to check out: ").replace(" ", "")
-    check_out = check_out.zfill(3)
+    isbn = input("Enter ISBN to check out: ").zfill(3).replace(" ", "")
 
-    # If the book not found in the catalog
-    if check_out not in books:
+    # Check if the book is not found
+    if isbn not in library_catalog:
         print("Book not found in the catalog.")
         time.sleep(2)
 
-    # If it has already been checked out
-    elif books[check_out][2] == False:
+    # Check if the book is already checked out
+    elif library_catalog[isbn]["available"] == False:
         print("Sorry, the book is currently checked out.")
         time.sleep(2)
 
-    # If the book is available in the category
     else:
-        books[check_out][2] = False
-        print(f"Book '{books [check_out] [0]}' checked out successfully.")
+        # Mark the book as checked out
+        library_catalog[isbn]["available"] = False
+        print(f"Book '{library_catalog[isbn]['title']}' checked out successfully.")
 
+        # Ask if the user wants to check out another book
         another = input("Do you want to check out another book? (y/n): ").lower()
         if another == "y":
             clear_screen()
-            Check_Out()
+            check_out_book()
         else:
             print()
 
 
-def Check_In():
+def check_in_book():
+    """Function to check in a borrowed book"""
     clear_screen()
-    check_in = input("Enter ISBN to check in: ").replace(" ", "")
-    check_in = check_in.zfill(3)
+    isbn = input("Enter ISBN to check in: ").zfill(3).replace(" ", "")
 
-    # If the book not found in the catalog
-    if check_in not in books:
+    # Check if the book is not found
+    if isbn not in library_catalog:
         print("Book not found in the catalog.")
         time.sleep(2)
 
-    # If the book is actually available in the catalog or has been returned
-    elif books[check_in][2] == True:
+    # Check if the book is already available
+    elif library_catalog[isbn]["available"] == True:
         print("The book is actually available in the catalog.")
+        time.sleep(2)
 
-    # To retrieve the book that has been checked out from the catalog
     else:
-        books[check_in][2] = False
-        print(f"Book '{books [check_in] [0]}' checked in successfully.")
+        # Mark the book as available
+        library_catalog[isbn]["available"] = True
+        print(f"Book '{library_catalog[isbn]['title']}' checked in successfully.")
 
+        # Ask if the user wants to check in another book
         another = input("Do you want to check in another book? (y/n): ").lower()
         if another == "y":
             clear_screen()
-            Check_In()
+            check_in_book()
         else:
             print()
 
 
 def list_books():
+    """Function to list all books in the catalog"""
     clear_screen()
     print("Library Catalog:")
 
-    # To obtain the ISBN of each book in the "key"
-    for key in books.keys():
-        list_books = f"ISBN: {key}, Title: {books [key] [0]}, Author: {books [key] [1]}, Available: {books [key] [2]}"
-        print(list_books)
+    # Loop through all books and display their details
+    for key in library_catalog.keys():
+        print(
+            f"ISBN: {key}, Title: {library_catalog[key]['title']}, Author: {library_catalog[key]['author']}, Available: {library_catalog[key]['available']}"
+        )
 
     input("Press any key to go back to the main menu . . . ")
     print()
 
 
 while True:
+    # Main menu loop
     clear_screen()
 
-    # Main Menu
+    # Display the menu options
     print("Menu:")
     print("1. Add Book")
     print("2. Check Out Book")
@@ -119,29 +128,28 @@ while True:
     print("5. Exit")
     choice = input("Enter your choice (1-5): ").strip()
 
-    # Add Book
+    # Add a new book
     if choice == "1":
-        Add()
+        add_book()
 
-    # Check Out Book
+    # Check out a book
     elif choice == "2":
-        Check_Out()
+        check_out_book()
 
-    # Check In Book
+    # Check in a book
     elif choice == "3":
-        Check_In()
+        check_in_book()
 
-    # List Books
+    # List all books
     elif choice == "4":
         list_books()
 
-    # Exit
+    # Exit the program
     elif choice == "5":
         print("Exiting the program . . .")
         break
 
-    # Invalid
+    # Handle invalid choices
     else:
         print("Invalid choice. Try again")
-        input("Press any key to continue . . .")
-        print()
+        time.sleep(2)
