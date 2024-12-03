@@ -47,11 +47,11 @@ rules = (
     f"{Fore.LIGHTYELLOW_EX}6. First to reach 3 points wins the game.{Style.RESET_ALL}",
 )
 
-computer_ascii = ""  # To store the computer’s choice as ASCII art.
-user_ascii = ""  # To store the user's choice as ASCII art.
+# Available options in the game
+OPTIONS = ["Rock", "Paper", "Scissors"]
 
 
-# Functions to improve writing and display for the user.
+# Functions to improve writing and display for the user
 def clear_screen():
     """Clears the screen for better user experience."""
     system("cls" if name == "nt" else "clear")
@@ -76,14 +76,14 @@ def print_separator(color=Fore.YELLOW):
     stdout.write(Style.RESET_ALL)
 
 
-def display_title(title):
+def display_title(title: str):
     """Displays a centered title with separators."""
     print_separator()
     print(Fore.CYAN + title.center(50))
     print_separator()
 
 
-def show_final_results(user_score, computer_score):
+def show_final_results(user_score: int, computer_score: int):
     """Displays the final results with a styled message."""
     clear_screen()
     if user_score > computer_score:
@@ -96,40 +96,34 @@ def show_final_results(user_score, computer_score):
     print_separator()
 
 
-# Dynamic functions to operate the program.
-def computer_choice():
+# Dynamic functions to operate the program
+def computer_choice() -> str:
     """Random selection for the computer and saving the appropriate ASCII art."""
-    global computer_ascii
-
-    computer_choose = choice(["Rock", "Paper", "Scissors"])
-
+    computer_choose = choice(OPTIONS)
     if computer_choose == "Rock":
-        computer_ascii = rock_ascii
+        return computer_choose, rock_ascii
     elif computer_choose == "Paper":
-        computer_ascii = paper_ascii
+        return computer_choose, paper_ascii
     else:
-        computer_ascii = scissors_ascii
-    return computer_choose
+        return computer_choose, scissors_ascii
 
 
-def user_choice(user_choose):
+def user_choice(user_choose) -> str:
     """Validating the user's choice and storing the appropriate ASCII art for the correct selection."""
-    global user_ascii
-    if user_choose not in ["Rock", "Paper", "Scissors"]:
-        return False
+    if user_choose not in OPTIONS:
+        return None, None
     if user_choose == "Rock":
-        user_ascii = rock_ascii
+        return user_choose, rock_ascii
     elif user_choose == "Paper":
-        user_ascii = paper_ascii
+        return user_choose, paper_ascii
     else:
-        user_ascii = scissors_ascii
-    return user_choose
+        return user_choose, scissors_ascii
 
 
-def compare_choices(user_choose, computer_choose):
-    """Compares choices and returns the result"""
+def compare_choices(user_choose, computer_choose) -> int:
+    """Compares choices and returns the result."""
     if user_choose == computer_choose:
-        return  # Draw
+        return None  # Draw
     elif (
         (user_choose == "Rock" and computer_choose == "Scissors")
         or (user_choose == "Paper" and computer_choose == "Rock")
@@ -151,11 +145,11 @@ def game():
             "\nEnter your choice (rock, paper, scissors): ", color=Fore.CYAN
         )
 
-        user_choose = input().capitalize()
-        computer_choose = computer_choice()
+        user_choose, user_ascii = user_choice(input().capitalize())
+        computer_choose, computer_ascii = computer_choice()
 
         # Display the user's choice in ASCII ART
-        if user_choice(user_choose):
+        if user_choose:
             print(f"\n{Fore.GREEN}You choose:")
             display_with_effects(user_ascii, color=Fore.GREEN, is_ASCII_art=True)
         else:
@@ -204,7 +198,7 @@ def game():
 
 
 def run_the_program():
-    """Displaying the start interface and running the game."""
+    """Initializes the game, displays the start screen, and handles the game flow."""
     clear_screen()
     display_title("Welcome to Rock, Paper, Scissors")
     display_with_effects(
