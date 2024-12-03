@@ -88,7 +88,6 @@ def display_title(title):
     print_separator()
 
 
-# Display the final results
 def show_final_results(user_score, computer_score):
     """Displays the final results with a styled message."""
     clear_screen()
@@ -164,7 +163,7 @@ def game():
             slow_writing_ascii(user_ascii)
         else:
             slow_writing("\nInvalid choice. Please try again.", color=Fore.RED)
-            sleep(2)
+            sleep(1)
             continue
 
         # Display the computer's choice in ASCII ART
@@ -218,10 +217,10 @@ def run_the_program():
         for line in rules:
             slow_writing(line + "\n")
         sleep(2)
-    slow_writing(
-        "\nIf you have understood the rules, get ready to play!",
-        color=Fore.LIGHTCYAN_EX,
-    )
+        slow_writing(
+            "\nIf you have understood the rules, get ready to play!",
+            color=Fore.LIGHTCYAN_EX,
+        )
     slow_writing("\nPress Enter to begin your game...", color=Fore.GREEN)
     input()
 
