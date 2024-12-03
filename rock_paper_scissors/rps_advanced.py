@@ -37,14 +37,14 @@ scissors_ascii = """
 rules = (
     f"{Fore.LIGHTCYAN_EX}Rock-Paper-Scissors Rules:",
     f"{Fore.MAGENTA}1. The game is played between two players.",
-    f"{Fore.LIGHTGREEN_EX}2. Each player chooses one of three options: Rock, Paper, or Scissors.",
-    f"{Fore.LIGHTRED_EX}3. The winner is determined by the following rules:",
-    f"{Fore.BLUE}   - Rock crushes Scissors (Rock wins).",
-    f"{Fore.BLUE}   - Scissors cuts Paper (Scissors wins).",
-    f"{Fore.BLUE}   - Paper covers Rock (Paper wins).",
-    f"{Fore.LIGHTRED_EX}4. If both players choose the same option, the game is a tie.",
-    f"{Fore.LIGHTMAGENTA_EX}5. The game can be played in multiple rounds.",
-    f"{Fore.YELLOW}6. First to reach 3 points wins the game.{Style.RESET_ALL}",
+    f"{Fore.MAGENTA}2. Each player chooses one of three options: Rock, Paper, or Scissors.",
+    f"{Fore.MAGENTA}3. The winner is determined by the following rules:",
+    f"{Fore.LIGHTGREEN_EX}   - Rock crushes Scissors (Rock wins).",
+    f"{Fore.LIGHTGREEN_EX}   - Scissors cuts Paper (Scissors wins).",
+    f"{Fore.LIGHTGREEN_EX}   - Paper covers Rock (Paper wins).",
+    f"{Fore.MAGENTA}4. If both players choose the same option, the game is a tie.",
+    f"{Fore.MAGENTA}5. The game can be played in multiple rounds.",
+    f"{Fore.LIGHTYELLOW_EX}6. First to reach 3 points wins the game.{Style.RESET_ALL}",
 )
 
 computer_ascii = ""  # To store the computer’s choice as ASCII art.
@@ -164,8 +164,8 @@ def game():
             continue
 
         # Display the computer's choice in ASCII ART
-        print(f"\n{Fore.YELLOW}Computer choose:")
-        display_with_effects(computer_ascii, color=Fore.YELLOW, is_ASCII_art=True)
+        print(f"\n{Fore.RED}Computer choose:")
+        display_with_effects(computer_ascii, color=Fore.RED, is_ASCII_art=True)
 
         result = compare_choices(user_choose, computer_choose)
 
@@ -218,7 +218,7 @@ def run_the_program():
         sleep(2)
         display_with_effects(
             "\nIf you have understood the rules, get ready to play!",
-            color=Fore.LIGHTCYAN_EX,
+            color=Fore.CYAN,
         )
     display_with_effects("\nPress Enter to begin your game...", color=Fore.GREEN)
     input()
