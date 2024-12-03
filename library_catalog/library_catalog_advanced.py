@@ -1,88 +1,98 @@
 from colorama import Fore, Style, init
-import os
-import time
+from os import system, name
+from time import sleep
 
-# Initialize colorama
+# Initialize colorama to support colored text in the console
 init(autoreset=True)
 
 
 def clear_screen():
-    os.system("cls" if os.name == "nt" else "clear")
+    """
+    Clears the terminal screen for better readability.
+    Works for both Windows and Unix-based systems.
+    """
+    system("cls" if name == "nt" else "clear")
 
 
-books = {}  # Dictionary to store books in the catalog
+# Dictionary to store book details in the library catalog
+library_catalog = {}
 
 
-def Add():
+def add_book():
+    """
+    Function to add a new book to the library catalog.
+    It prompts the user for ISBN, title, and author details.
+    """
     clear_screen()
     while True:
-        book_ISBN = input("Enter ISBN (numeric only): ").replace(" ", "").zfill(3)
+        # Request and process ISBN input
+        isbn = input("Enter ISBN (numeric only): ").zfill(3).replace(" ", "")
 
         # Ensure ISBN is numeric
-        if not book_ISBN.isdigit():
+        if not isbn.isdigit():
             print(Fore.RED + "Error: ISBN must be numeric. Please try again.")
             continue
 
-        # Check if the ISBN already exists
-        if book_ISBN in books:
+        # Ensure ISBN is unique in the catalog
+        if isbn in library_catalog:
             print(
                 Fore.RED
                 + "Error: This book is already in the catalog. Please try again."
             )
             continue
 
-        # Get book details
-        book_title = input("Enter title: ").strip()
-        book_author = input("Enter author: ").strip()
+        # Request and process book details
+        title = input("Enter title: ").strip()
+        author = input("Enter author: ").strip()
 
-        # Add book to catalog
-        books[book_ISBN] = [book_title, book_author, True]
+        # Add the book to the library catalog
+        library_catalog[isbn] = {"title": title, "author": author, "available": True}
         print(
             Fore.GREEN
-            + f"Success: Book '{book_title}' by {book_author} added to the catalog with ISBN {book_ISBN}."
+            + f"Success: Book '{title}' by {author} added to the catalog with ISBN {isbn}."
         )
 
-        # Prompt to add another book
+        # Check if the user wants to add another book
         another = input("Do you want to add another book? (y/n): ").lower()
         if another != "y":
             break
 
 
-def Check_Out():
+def check_out_book():
+    """
+    Function to check out a book from the library catalog.
+    It ensures the book is available and marks it as borrowed.
+    """
     clear_screen()
     while True:
-        # Check if there are available books to borrow
-        available_books = [isbn for isbn, details in books.items() if details[2]]
+        # Check if there are any books available for checkout
+        available_books = [
+            isbn for isbn, details in library_catalog.items() if details["available"]
+        ]
         if not available_books:
             print(Fore.RED + "No books available for checkout.")
-            time.sleep(2)
+            sleep(2)
             break
 
-        check_out = input("Enter ISBN to check out: ").replace(" ", "").zfill(3)
+        # Request and process ISBN input
+        isbn = input("Enter ISBN to check out: ").zfill(3).replace(" ", "")
 
-        # If the book is not found in the catalog
-        if check_out not in books:
+        # Validate the ISBN exists in the catalog
+        if isbn not in library_catalog:
             print(Fore.RED + "Error: Book not found in the catalog. Please try again.")
             continue
 
-        # If the book is already checked out
-        if not books[check_out][2]:
+        # Check if the book is already checked out
+        if not library_catalog[isbn]["available"]:
             print(Fore.YELLOW + "Warning: The book is currently checked out.")
             continue
 
-        # Check out the book
-        books[check_out][2] = False
+        # Mark the book as checked out
+        library_catalog[isbn]["available"] = False
         print(
             Fore.GREEN
-            + f"Success: Book '{books[check_out][0]}' checked out successfully."
+            + f"Success: Book '{library_catalog[isbn]['title']}' checked out successfully."
         )
-
-        # Check again if any books are available
-        available_books = [isbn for isbn, details in books.items() if details[2]]
-        if not available_books:
-            print(Fore.RED + "No more books available for checkout.")
-            time.sleep(2)
-            break
 
         # Prompt to check out another book
         another = input("Do you want to check out another book? (y/n): ").lower()
@@ -90,34 +100,44 @@ def Check_Out():
             break
 
 
-def Check_In():
+def check_in_book():
+    """
+    Function to check in a previously borrowed book.
+    It ensures the book is in the catalog and currently marked as borrowed.
+    """
     clear_screen()
     while True:
-        borrowed_books = [isbn for isbn, details in books.items() if not details[2]]
+        # Check if there are any books currently borrowed
+        borrowed_books = [
+            isbn
+            for isbn, details in library_catalog.items()
+            if not details["available"]
+        ]
         if not borrowed_books:
             print(Fore.RED + "No books borrowed for check-in.")
-            time.sleep(2)
+            sleep(2)
             break
 
-        check_in = input("Enter ISBN to check in: ").replace(" ", "").zfill(3)
+        # Request and process ISBN input
+        isbn = input("Enter ISBN to check in: ").zfill(3).replace(" ", "")
 
-        # If the book is not found in the catalog
-        if check_in not in books:
+        # Validate the ISBN exists in the catalog
+        if isbn not in library_catalog:
             print(Fore.RED + "Error: Book not found in the catalog. Please try again.")
             continue
 
-        # If the book is already available
-        if books[check_in][2]:
+        # Check if the book is already marked as available
+        if library_catalog[isbn]["available"]:
             print(
                 Fore.YELLOW + "Warning: The book is already available in the catalog."
             )
             continue
 
-        # Check in the book
-        books[check_in][2] = True
+        # Mark the book as available
+        library_catalog[isbn]["available"] = True
         print(
             Fore.GREEN
-            + f"Success: Book '{books[check_in][0]}' checked in successfully."
+            + f"Success: Book '{library_catalog[isbn]['title']}' checked in successfully."
         )
 
         # Prompt to check in another book
@@ -127,22 +147,26 @@ def Check_In():
 
 
 def list_books():
+    """
+    Function to display all books in the library catalog.
+    It lists ISBN, title, author, and availability of each book.
+    """
     clear_screen()
-    if not books:
+    if not library_catalog:
         print(Fore.RED + "No books to display.")
-        time.sleep(2)
+        sleep(2)
         return
 
     print(Fore.CYAN + "Library Catalog:")
     print("-" * 40)
 
-    # Display each book in the catalog with colorized fields
-    for key, value in books.items():
+    # Iterate and display each book's details
+    for key, value in library_catalog.items():
         print(
             f"{Fore.MAGENTA}ISBN: {Fore.YELLOW}{key} {Style.RESET_ALL}| "
-            f"{Fore.MAGENTA}Title: {Style.RESET_ALL}{value[0]} | "
-            f"{Fore.MAGENTA}Author: {Style.RESET_ALL}{value[1]} | "
-            f"{Fore.MAGENTA}Available: {Style.RESET_ALL}{'Yes' if value[2] else 'No'}"
+            f"{Fore.MAGENTA}Title: {Style.RESET_ALL}{value['title']} | "
+            f"{Fore.MAGENTA}Author: {Style.RESET_ALL}{value['author']} | "
+            f"{Fore.MAGENTA}Available: {Style.RESET_ALL}{'Yes' if value['available'] else 'No'}"
         )
 
     print("-" * 40)
@@ -153,7 +177,7 @@ def list_books():
 while True:
     clear_screen()
 
-    # Display main menu
+    # Display the main menu
     print(Fore.CYAN + "Library Management System")
     print("-" * 30)
     print("1. Add Book")
@@ -163,21 +187,22 @@ while True:
     print("5. Exit")
     print("-" * 30)
 
+    # Request user input for menu choice
     choice = input("Enter your choice (1-5): ").strip()
 
-    # Process user choice
+    # Execute the corresponding function based on user choice
     if choice == "1":
-        Add()
+        add_book()
     elif choice == "2":
-        Check_Out()
+        check_out_book()
     elif choice == "3":
-        Check_In()
+        check_in_book()
     elif choice == "4":
         list_books()
     elif choice == "5":
         print(Fore.CYAN + "Exiting the program... Goodbye!")
-        time.sleep(1)
+        sleep(1)
         break
     else:
         print(Fore.RED + "Invalid choice. Please enter a number between 1 and 5.")
-        time.sleep(2)
+        sleep(2)
