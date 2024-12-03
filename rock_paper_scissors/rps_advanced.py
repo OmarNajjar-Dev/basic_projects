@@ -57,22 +57,17 @@ def clear_screen():
     system("cls" if name == "nt" else "clear")
 
 
-def slow_writing(text, delay=0.07, color=Fore.RESET):
-    """Writes text to the screen with a typing animation effect."""
+def display_with_effects(
+    text, text_delay=0.07, color=Fore.RESET, is_ASCII_art=False, ASCII_delay=0.01
+):
+    """Displays text or ASCII art with a typing or drawing animation effect."""
+    delay = ASCII_delay if is_ASCII_art else text_delay
     stdout.write(color)
     for char in text:
         stdout.write(char)
         stdout.flush()
         sleep(delay)
     stdout.write(Style.RESET_ALL)
-
-
-def slow_writing_ascii(text):
-    """Writes ASCII art to the screen with a typing animation effect."""
-    for char in text:
-        stdout.write(char)
-        stdout.flush()
-        sleep(0.01)
 
 
 def print_separator(color=Fore.YELLOW):
@@ -152,7 +147,9 @@ def game():
     while True:
         clear_screen()
         display_title("Rock, Paper, Scissors")
-        slow_writing("\nEnter your choice (rock, paper, scissors): ", color=Fore.CYAN)
+        display_with_effects(
+            "\nEnter your choice (rock, paper, scissors): ", color=Fore.CYAN
+        )
 
         user_choose = input().capitalize()
         computer_choose = computer_choice()
@@ -160,26 +157,26 @@ def game():
         # Display the user's choice in ASCII ART
         if user_choice(user_choose):
             print(f"\n{Fore.GREEN}You choose:")
-            slow_writing_ascii(user_ascii)
+            display_with_effects(user_ascii, color=Fore.GREEN, is_ASCII_art=True)
         else:
-            slow_writing("\nInvalid choice. Please try again.", color=Fore.RED)
+            display_with_effects("\nInvalid choice. Please try again.", color=Fore.RED)
             sleep(1)
             continue
 
         # Display the computer's choice in ASCII ART
         print(f"\n{Fore.YELLOW}Computer choose:")
-        slow_writing_ascii(computer_ascii)
+        display_with_effects(computer_ascii, color=Fore.YELLOW, is_ASCII_art=True)
 
         result = compare_choices(user_choose, computer_choose)
 
         if result == 1:
-            slow_writing("\nYou won this round!", color=Fore.GREEN)
+            display_with_effects("\nYou won this round!", color=Fore.GREEN)
             user_score += 1
         elif result == 0:
-            slow_writing("\nComputer won this round.", color=Fore.RED)
+            display_with_effects("\nComputer won this round.", color=Fore.RED)
             computer_score += 1
         else:
-            slow_writing("\nIt's a tie!", color=Fore.BLUE)
+            display_with_effects("\nIt's a tie!", color=Fore.BLUE)
 
         print(
             f"\n{Fore.CYAN}Your score: {user_score} | Computer score: {computer_score}"
@@ -201,27 +198,29 @@ def game():
             display_title("Thank You for Playing!")
             quit()
         else:
-            slow_writing("Invalid input. Please type 'y' or 'n'.\n", color=Fore.RED)
+            display_with_effects(
+                "Invalid input. Please type 'y' or 'n'.\n", color=Fore.RED
+            )
 
 
 def run_the_program():
     """Displaying the start interface and running the game."""
     clear_screen()
     display_title("Welcome to Rock, Paper, Scissors")
-    slow_writing(
+    display_with_effects(
         "Press any key if you know the rules of the game. If you want help, type 'help': ",
         color=Fore.CYAN,
     )
     if input().lower() == "help":
         print()
         for line in rules:
-            slow_writing(line + "\n")
+            display_with_effects(line + "\n")
         sleep(2)
-        slow_writing(
+        display_with_effects(
             "\nIf you have understood the rules, get ready to play!",
             color=Fore.LIGHTCYAN_EX,
         )
-    slow_writing("\nPress Enter to begin your game...", color=Fore.GREEN)
+    display_with_effects("\nPress Enter to begin your game...", color=Fore.GREEN)
     input()
 
     clear_screen()
